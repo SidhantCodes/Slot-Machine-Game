@@ -73,8 +73,67 @@ const spin = () => {
 
 }
 
-const res = spin();
+const transpose = (reels)=> {
+    const rows = [];
+    for(let i=0;i<ROWS;i++){
+        rows.push([]);
+        for(let j=0;j<COLS;j++){
+            rows[i].push(reels[j][i]);
+        }
+    }
+
+    return rows;
+}
+
+const Result = (res)=>{
+    for(const rows of res){
+        let row = "";
+        for(const [i, symbol] of rows.entries()){
+            row+=symbol;
+            if(i!=rows.length-1){
+                row += " | ";
+            }
+        }
+        console.log(row);
+    }
+}
+
+const winnings = (resT, bet, lines)=>{
+    let winAmt = 0;
+    for(let i=0;i<lines;i++){
+        const row = resT[i];
+        let allSame = true;
+
+        for(const s of row){
+            if(s!=row[0]){
+                allSame=false;
+                break;
+            }
+        }
+        if(allSame){
+            winAmt+=bet * SYMBOL_MULTIPLIER[row[0]];
+        }
+    }
+    console.log("You won $"+winAmt.toString());
+    return winAmt;
+}
+
 
 let balance = deposit();
-const numberLines = getNumLines();
-const bet = getBet(balance, numberLines);
+let con = 'y';
+while(balance>0){
+    const numberLines = getNumLines();
+    const bet = getBet(balance, numberLines);
+    balance-=bet*numberLines;
+    const res = spin();
+    const resT = transpose(res);
+    Result(resT);
+    balance += winnings(resT, bet, numberLines);
+    console.log("Updated balance: "+balance.toString());
+    if(balance>0){    
+        con = prompt("Do you wish to continue?[y/n]: ");
+        if(con!='y'){
+            break;
+        }
+    }
+}
