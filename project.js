@@ -8,6 +8,13 @@ const SYMBOLS_COUNT = {
     "D":8
 }
 
+const SYMBOL_MULTIPLIER = {
+    "A":5,
+    "B":4,
+    "C":3,
+    "D":2
+}
+
 
 const getNumLines = () => {
     while(true){
@@ -43,6 +50,30 @@ const getBet = (balance, lines) => {
         }
     }
 }
+
+const spin = () => {
+    const symbols = [];
+    for(const [symbol, count] of Object.entries(SYMBOLS_COUNT)){
+        for(let i=0;i<count;i++){
+            symbols.push(symbol);
+        }
+    }
+
+    const reels = [[],[],[]];
+    for(let i=0;i<COLS;i++){
+        const reelSym = [...symbols];
+        for(let j=0;j<ROWS;j++){
+            const rI = Math.floor(Math.random()*reelSym.length);
+            const selected = reelSym[rI];
+            reels[i].push(selected);
+            reelSym.splice(rI, 1);
+        }
+    }
+    return reels;
+
+}
+
+const res = spin();
 
 let balance = deposit();
 const numberLines = getNumLines();
